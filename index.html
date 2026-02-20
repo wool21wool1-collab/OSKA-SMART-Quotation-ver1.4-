@@ -297,7 +297,7 @@
                             <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><span class="w-1.5 h-6 bg-oska-black rounded-full"></span>담당자 정보</h3>
                             <div class="space-y-4 bg-gray-50 p-5 rounded-lg border border-gray-100">
                                 <div>
-                                    <label class="block text-xs font-bold text-gray-500 mb-1.5 uppercase">Branch / 지사</label>
+                                    <label class="block text-xs font-bold text-gray-500 mb-1.5 uppercase">Branch / 지사<span class="text-red-500 ml-1">*</span></label>
                                     <select id="branch-select" class="input-base" onchange="handleBranchChange()">
                                         <option value="">지사 선택</option>
                                         <option value="본사">본사</option>
@@ -311,7 +311,7 @@
                                     <input type="text" id="branch-input" class="input-base mt-2 hidden" placeholder="지사명 입력">
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-bold text-gray-500 mb-1.5 uppercase">Manager / 담당자</label>
+                                    <label class="block text-xs font-bold text-gray-500 mb-1.5 uppercase">Manager / 담당자<span class="text-red-500 ml-1">*</span></label>
                                     <select id="handler-select" class="input-base" onchange="handleHandlerChange()">
                                         <option value="">담당자 선택</option>
                                         <option value="본사 이한울 이사">본사 이한울 이사</option>
@@ -476,7 +476,7 @@
                         <dl class="grid grid-cols-[80px_1fr] gap-y-3">
                             <dt class="text-gray-500">상호</dt><dd class="font-bold text-lg text-gray-900">(주)오스카</dd>
                             <dt class="text-gray-500">담당자</dt><dd id="est-handler" class="font-medium">-</dd>
-                            <dt class="text-gray-500">연락처</dt><dd class="font-medium">1800-5945 / 010-0000-0000</dd>
+                            <dt class="text-gray-500">연락처</dt><dd id="est-supplier-phone" class="font-medium">1800-5945</dd>
                         </dl>
                     </div>
                     <div class="w-full md:w-1/2 p-6 bg-gray-50/50">
@@ -618,6 +618,17 @@
             "Basic Folding": 100000, "Fix Glass": 50000, "Glass Door": 200000, "LYRA Set": 100000
         };
 
+        const managerPhones = {
+            "본사 이한울 이사": "010-6202-3977",
+            "본사 김선준 실장": "010-5568-5902",
+            "본사 장윤서 프로": "010-8001-6873",
+            "강북지사 이범호 이사": "010-6830-0913",
+            "강남지사 백원준 이사": "010-8609-5953",
+            "강동지사 이호남 이사": "010-9991-1638",
+            "경남지사 이주훈 이사": "010-5810-9107",
+            "전라제주지사 이우경 이사": "010-8354-5946"
+        };
+
         const STORAGE_KEY = 'oska_quote_data_v2';
         let autoSaveTimer = null;
         let discountWarningShown = false;
@@ -698,8 +709,30 @@
             const footerP1 = document.getElementById('footer-page-1');
             const footerP2 = document.getElementById('footer-page-2');
 
-            // 2페이지(견적서)로 넘어갈 때 필수 항목 검증 (요구사항 3)
+            // 2페이지(견적서)로 넘어갈 때 필수 항목 검증 (요구사항 3, 추가 요구사항 1)
             if (num === 2) {
+                const bSel = document.getElementById('branch-select');
+                const bVal = bSel.value;
+                const bInp = document.getElementById('branch-input').value.trim();
+                
+                if (!bVal || (bVal === '직접입력' && !bInp)) {
+                    alert("지사를 선택하거나 기입해주세요.");
+                    if(bVal === '직접입력') document.getElementById('branch-input').focus();
+                    else bSel.focus();
+                    return;
+                }
+
+                const hSel = document.getElementById('handler-select');
+                const hVal = hSel.value;
+                const hInp = document.getElementById('handler-input').value.trim();
+
+                if (!hVal || (hVal === '직접 입력' && !hInp)) {
+                    alert("담당자를 선택하거나 기입해주세요.");
+                    if(hVal === '직접 입력') document.getElementById('handler-input').focus();
+                    else hSel.focus();
+                    return;
+                }
+
                 const phone = document.getElementById('cust-phone').value.trim();
                 const regionDo = document.getElementById('region-do').value;
                 const regionSi = document.getElementById('region-si').value;
@@ -775,6 +808,14 @@
             let fullHandler = handler;
             if (branch && handler && !handler.includes(branch)) fullHandler = `${branch} ${handler}`;
             document.getElementById('est-handler').textContent = fullHandler || '-';
+
+            const managerPhone = managerPhones[hSel.value];
+            const supplierPhoneElem = document.getElementById('est-supplier-phone');
+            if (managerPhone) {
+                supplierPhoneElem.textContent = `1800-5945 / ${managerPhone}`;
+            } else {
+                supplierPhoneElem.textContent = "1800-5945";
+            }
         }
 
         function showWarningModal() { document.getElementById('discount-modal').classList.add('active'); }
