@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OSKA 스마트 통합 견적 시스템 (Final Release)</title>
+    <title>OSKA 스마트 통합 견적 시스템 v1.8</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -287,6 +287,8 @@
                     <div class="text-right">
                         <div class="text-sm text-gray-500 mb-1">Date</div>
                         <div id="view-date-1" class="font-bold text-2xl text-oska-black"></div>
+                        <!-- [v1.8] 상담시트 버전 레이블 추가 -->
+                        <div class="text-[10px] text-gray-400 mt-1 tracking-wide">2026 OSKA SMART Quotation ver1.8</div>
                     </div>
                 </div>
 
@@ -338,7 +340,11 @@
                                 </div>
                                 <div class="grid grid-cols-3 gap-2 items-center">
                                     <span class="text-sm font-bold text-gray-600">연락처<span class="text-red-500 ml-1">*</span></span>
-                                    <input type="tel" id="cust-phone" class="input-base col-span-2" placeholder="010-0000-0000" oninput="formatPhoneNumber(this)" maxlength="13">
+                                    <div class="col-span-2">
+                                        <input type="tel" id="cust-phone" class="input-base" placeholder="010-0000-0000" oninput="formatPhoneNumber(this)" maxlength="13">
+                                        <!-- [v1.8] 허위 번호 경고 레이블 -->
+                                        <div id="phone-warn" class="text-[11px] text-red-500 mt-1 font-medium hidden">연락처가 올바르지 않거나 허위 번호일 가능성이 높습니다.</div>
+                                    </div>
                                 </div>
                                 <div class="grid grid-cols-3 gap-2 items-start pt-2">
                                     <span class="text-sm font-bold text-gray-600 mt-2">주소<span class="text-red-500 ml-1">*</span></span>
@@ -440,8 +446,8 @@
                 <div class="mt-12 pt-8 border-t border-gray-200">
                     <h4 class="font-bold text-sm text-gray-900 mb-3">[가견적 유의사항]</h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 text-xs text-gray-500 leading-relaxed">
-                        <p><span class="font-bold text-gray-700">• 가견적 안내:</span> 본 견적서는 상담 편의를 위한 ‘가견적서(Preliminary Quote)’입니다. 정확한 견적은 현장 방문 및 실측 후 현장 여건(설치 난이도, 마감재 등)에 따라 변동될 수 있습니다.</p>
-                        <p><span class="font-bold text-gray-700">• 산출 기준:</span> 본 견적 금액은 별도의 설계비가 포함되지 않은 ‘납품/실행가’ 기준으로 작성되었습니다. 추후 상세 도면 설계나 사양 변경 요청 시 견적 금액이 조정될 수 있습니다.</p>
+                        <p><span class="font-bold text-gray-700">• 가견적 안내:</span> 본 견적서는 상담 편의를 위한 '가견적서(Preliminary Quote)'입니다. 정확한 견적은 현장 방문 및 실측 후 현장 여건(설치 난이도, 마감재 등)에 따라 변동될 수 있습니다.</p>
+                        <p><span class="font-bold text-gray-700">• 산출 기준:</span> 본 견적 금액은 별도의 설계비가 포함되지 않은 '납품/실행가' 기준으로 작성되었습니다. 추후 상세 도면 설계나 사양 변경 요청 시 견적 금액이 조정될 수 있습니다.</p>
                         <p><span class="font-bold text-gray-700">• 결제 조건:</span> 제품가액(자재비)은 완납 조건이며, 시공비는 공사 종료 후 즉시 지급 조건입니다. (VAT 별도)</p>
                         <p><span class="font-bold text-gray-700">• 별도 공사:</span> 1차 전기 인입 및 바닥 기초 토목/보강 공사 등은 견적 외 별도 사항입니다.</p>
                         <p><span class="font-bold text-gray-700">• 장비 비용:</span> 견적 시 반영하지 않은 현장 진입 여건에 따른 양중 장비(크레인, 스카이 등) 사용료는 실비 청구됩니다.</p>
@@ -466,6 +472,8 @@
                     <div class="text-right">
                         <div class="text-sm font-bold text-gray-500">Estimate Date</div>
                         <div id="view-date-2" class="text-2xl font-bold text-oska-black tabular-nums"></div>
+                        <!-- [v1.8] 버전 레이블 -->
+                        <div class="text-[10px] text-gray-400 mt-1 tracking-wide">2026 OSKA SMART Quotation ver1.8</div>
                     </div>
                 </div>
 
@@ -642,10 +650,15 @@
             switchTab(1);
         });
 
+        /* [v1.8] 실시간 날짜: YYYY. MM. DD. 형식 */
         function initDate() {
-            const today = new Date().toLocaleDateString('ko-KR', { year:'numeric', month:'2-digit', day:'2-digit' });
-            document.getElementById('view-date-1').textContent = today;
-            document.getElementById('view-date-2').textContent = today;
+            const d = new Date();
+            const yyyy = d.getFullYear();
+            const mm = String(d.getMonth() + 1).padStart(2, '0');
+            const dd = String(d.getDate()).padStart(2, '0');
+            const formatted = `${yyyy}. ${mm}. ${dd}.`;
+            document.getElementById('view-date-1').textContent = formatted;
+            document.getElementById('view-date-2').textContent = formatted;
         }
 
         function initRegions() {
@@ -687,6 +700,35 @@
             else if (val.length < 11) res = val.substr(0, 3) + '-' + val.substr(3, 3) + '-' + val.substr(6);
             else res = val.substr(0, 3) + '-' + val.substr(3, 4) + '-' + val.substr(7);
             el.value = res;
+            
+            // [v1.8] 실시간 허위 번호 체크
+            validatePhoneNumber(val);
+        }
+
+        /* [v1.8] 허위 연락처 패턴 체크 로직 */
+        function validatePhoneNumber(digits) {
+            const warnEl = document.getElementById('phone-warn');
+            if (digits.length < 10) { warnEl.classList.add('hidden'); return; }
+
+            let isFake = false;
+            // 1. 0으로 시작하지 않는 경우 (예: 123-...)
+            if (!digits.startsWith('0')) isFake = true;
+            
+            // 2. 뒷자리가 모두 같은 경우 (예: 0000, 1111)
+            const last4 = digits.slice(-4);
+            const last7 = digits.slice(-7);
+            if (last4.length === 4 && /^(\d)\1+$/.test(last4)) isFake = true;
+            if (last7.length >= 7 && /^(\d)\1+$/.test(last7)) isFake = true;
+
+            // 3. 연속된 숫자인 경우 (예: 1234, 5678)
+            const sequentialPatterns = ['0123', '1234', '2345', '3456', '4567', '5678', '6789', '9876', '5432', '4321'];
+            if (sequentialPatterns.some(p => digits.includes(p))) isFake = true;
+
+            // 4. 특정 허위 패턴 (2580 등)
+            if (digits.includes('2580')) isFake = true;
+
+            if (isFake) warnEl.classList.remove('hidden');
+            else warnEl.classList.add('hidden');
         }
 
         function switchTab(num) {
@@ -711,6 +753,15 @@
                 const regionSi = document.getElementById('region-si').value;
                 if (!phone) { alert("연락처는 필수 입력 항목입니다."); document.getElementById('cust-phone').focus(); return; }
                 if (!regionDo || !regionSi || regionSi === "시/군/구 선택") { alert("설치 현장 주소는 필수 선택 항목입니다."); document.getElementById('region-do').focus(); return; }
+                
+                // 가짜 번호 경고가 떠있는 상태에서 진행 시 최종 확인
+                const warnEl = document.getElementById('phone-warn');
+                if (!warnEl.classList.contains('hidden')) {
+                    if (!confirm("입력하신 연락처가 허위 번호 패턴과 일치합니다. 그대로 진행하시겠습니까?")) {
+                        document.getElementById('cust-phone').focus();
+                        return;
+                    }
+                }
                 syncCustomerInfo();
             }
 
@@ -811,6 +862,8 @@
             tr.querySelector('.price').dataset.basePrice = 0;
             const customInput = sel.nextElementSibling;
             if (prodName === 'custom' || prodName === '직접 입력') { sel.classList.add('hidden'); customInput.classList.remove('hidden'); customInput.focus(); return; }
+            
+            /* [v1.8] 색상 할증 명시 */
             const otherOption = colorSelect.querySelector('option[value="기타"]');
             if(prodName.includes("OPERA")) otherOption.textContent = "기타";
             else if(prodName.includes("AIREA") || prodName.includes("ATHENA")) otherOption.textContent = "기타 (+10%)";
@@ -821,7 +874,8 @@
                 let isAirea = prodName.includes("AIREA") || prodName.includes("OPERA") || prodName.includes("ATHENA");
                 let pivots = isAirea ? aireaPivots : (prodName.includes("수동") ? stayPivots.manual : stayPivots.electric);
                 let pOpts = pivots.map(p => `<option value="${p}">${p}</option>`).join('');
-                let heightHtml = prodName.includes("ATHENA") ? '' : `<div class="flex items-center gap-1 mt-1"><span class="text-xs text-gray-500 w-8">H</span><select class="excel-input bg-gray-50" onchange="calcPergola(this)"><option value="3000">3000이하</option><option value="6000">6000이하(+100만)</option></select></div>`;
+                /* [v1.8] 높이(H) 할증: ATHENA 제외, 파고라 제품군(STAY, Tone, AIREA, OPERA)에 높이 옵션 제공 */
+                let heightHtml = prodName.includes("ATHENA") ? '' : `<div class="flex items-center gap-1 mt-1"><span class="text-xs text-gray-500 w-8">H</span><select class="excel-input bg-gray-50 height-select" onchange="calcPergola(this)"><option value="3000">3000이하</option><option value="6000">6000이하(+100만)</option></select></div>`;
                 specCell.innerHTML = `<div class="flex flex-col gap-1"><div class="flex items-center gap-1"><span class="text-xs text-gray-500 w-8">Span</span><input type="tel" class="excel-input bg-gray-50 span-input" placeholder="mm" oninput="calcPergola(this)"></div><div class="flex items-center gap-1"><span class="text-xs text-gray-500 w-8">Pivot</span><select class="excel-input bg-gray-50 pivot-select" onchange="calcPergola(this)"><option value="">선택</option>${pOpts}</select></div>${heightHtml}</div>`;
                 let ledOpts = isAirea ? `<label class="chk-wrap py-0"><input type="checkbox" class="opt-dual" onchange="calcRow(this)"> 듀얼라인등</label><label class="chk-wrap py-0"><input type="checkbox" class="opt-blade" onchange="calcRow(this)"> 블레이드</label>` : `<label class="chk-wrap py-0"><input type="checkbox" class="opt-led" onchange="calcRow(this)"> 싱글라인등</label>`;
                 optionCell.innerHTML = `<div class="flex flex-col gap-1 text-xs">${ledOpts}<div class="flex items-center gap-1"><label class="chk-wrap py-0"><input type="checkbox" onchange="togglePillar(this)"> 기둥추가</label><input type="tel" class="excel-input w-12 text-center bg-gray-50 opt-pillar" disabled placeholder="0" oninput="calcRow(this)"></div></div>`;
@@ -871,7 +925,9 @@
             const prodName = tr.querySelector('td:nth-child(2) select').value;
             const span = parseInt(tr.querySelector('.span-input')?.value) || 0;
             const pivot = parseInt(tr.querySelector('.pivot-select')?.value) || 0;
-            const heightPlus = tr.querySelector('select[onchange="calcPergola(this)"]')?.value === '6000';
+            /* [v1.8] 높이 할증: .height-select 로 클래스명 명확화 */
+            const heightSelect = tr.querySelector('.height-select');
+            const heightPlus = heightSelect ? heightSelect.value === '6000' : false;
             if (span > 0 && pivot > 0) {
                 let type = prodName.includes('전동') ? 'electric' : (prodName.includes('Solar') ? 'solar' : 'manual');
                 let base = calculatePergolaPrice(prodName, type, span, pivot);
@@ -929,12 +985,29 @@
             if(item.price || isPercent) calcCons(tr.querySelector('.c-qty'));
         }
 
-        function addDirectConsRow() { addConsRow({ cat: '직접 공사비', spec: '인건비/부자재', isProductSelect: true }); }
+        /* [v1.8] 직접공사비(인건비) 항목은 테이블 최상단(Prepend)에 위치 */
+        function addDirectConsRow() {
+            const tbody = document.getElementById('cons-tbody');
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><input type="text" class="excel-input text-center" value="직접 공사비" placeholder="구분"></td>
+                <td><select class="excel-input cons-prod-select" onchange="setConsPrice(this)"><option value="">선택</option>${Object.keys(constructionPricesMap).map(k=>`<option value="${k}">${k}</option>`).join('')}</select></td>
+                <td><input type="text" class="excel-input" value="인건비/부자재" placeholder="상세"></td>
+                <td><input type="text" class="excel-input text-center" value="식"></td>
+                <td><input type="tel" class="excel-input text-center c-qty" value="1" oninput="calcCons(this)"></td>
+                <td><input type="tel" class="excel-input text-right c-price" value="0" oninput="calcCons(this)"></td>
+                <td class="text-right px-2"><span class="c-sum">0</span></td>
+                <td class="text-center hidden-on-print"><button onclick="delRow(this)" class="text-gray-400 hover:text-red-500 font-bold px-2">×</button></td>
+            `;
+            /* Prepend: 항상 최상단 */
+            tbody.insertBefore(tr, tbody.firstChild);
+        }
+
         function addMaterialTransportRow() { addConsRow({ cat: '자재 반입비', name: '운임/양중비' }); }
         function addIndirectConsRow() { addConsRow({ cat: '간접 공사비', name: '공과잡비', isPercent: true }); }
 
         function setConsPrice(sel) {
-            tr = sel.closest('tr');
+            const tr = sel.closest('tr');
             tr.querySelector('.c-price').value = constructionPricesMap[sel.value] || 0;
             tr.querySelector('td:nth-child(3) input').value = '인건비/부자재';
             calcCons(sel);
@@ -959,19 +1032,32 @@
                 const sel = r.querySelector('.cons-prod-select');
                 if(sel && sel.value) { if(counts[sel.value]) { r.querySelector('.c-qty').value = counts[sel.value]; calcCons(sel); usedKeys.add(sel.value); } else r.remove(); }
             });
-            for(const k in counts) if(!usedKeys.has(k)) { addDirectConsRow(); const rows = document.querySelectorAll('#cons-tbody tr'); const target = rows[rows.length-1]; target.querySelector('.cons-prod-select').value = k; target.querySelector('.c-qty').value = counts[k]; setConsPrice(target.querySelector('.cons-prod-select')); }
+            for(const k in counts) if(!usedKeys.has(k)) { addDirectConsRow(); const rows = document.querySelectorAll('#cons-tbody tr'); const target = rows[0]; target.querySelector('.cons-prod-select').value = k; target.querySelector('.c-qty').value = counts[k]; setConsPrice(target.querySelector('.cons-prod-select')); }
         }
 
+        /* [v1.8] 지역별 비용 보정: '전북특별자치도' 포함하여 전라도 권역 강화 */
         function updateRegionBasedCosts(region) {
             let freight = 300000, travel = 0;
-            if (region.includes('제주')) freight = 1800000;
-            else if (['경상','부산','대구','울산','전라','광주','강원'].some(k=>region.includes(k))) freight = 500000;
-            else if (['충청','대전','세종'].some(k=>region.includes(k))) freight = 400000;
-            if (['경상','부산','대구','울산','전라','광주','강원','제주'].some(k=>region.includes(k))) travel = 500000;
-            else if (['충청','대전','세종'].some(k=>region.includes(k))) travel = 400000;
+            if (region.includes('제주')) { freight = 1800000; }
+            else if (['경상','부산','대구','울산','전라','전북','광주','강원'].some(k=>region.includes(k))) { freight = 500000; }
+            else if (['충청','대전','세종'].some(k=>region.includes(k))) { freight = 400000; }
+            if (['경상','부산','대구','울산','전라','전북','광주','강원','제주'].some(k=>region.includes(k))) { travel = 500000; }
+            else if (['충청','대전','세종'].some(k=>region.includes(k))) { travel = 400000; }
+
+            /* [v1.8] 운임 수량 자동화: 전체 제품 수량 합계 기준 Math.ceil(전체수량 / 2) */
+            let totalProductQty = 0;
+            document.querySelectorAll('#est-tbody tr').forEach(r => {
+                totalProductQty += parseNum(r.querySelector('.qty')?.value);
+            });
+            const freightQty = Math.max(1, Math.ceil(totalProductQty / 2));
+
             document.querySelectorAll('#cons-tbody tr').forEach(r => {
                 const name = r.querySelector('td:nth-child(2) input')?.value.trim();
-                if(name === '운임') { r.querySelector('.c-price').value = freight; calcCons(r.querySelector('.c-price')); }
+                if(name === '운임') { 
+                    r.querySelector('.c-price').value = freight; 
+                    r.querySelector('.c-qty').value = freightQty;
+                    calcCons(r.querySelector('.c-price')); 
+                }
                 if(name === '출장비') { r.querySelector('.c-price').value = travel; calcCons(r.querySelector('.c-price')); }
             });
         }
@@ -980,6 +1066,21 @@
         function calcTotal() {
             let prodSum = 0;
             document.querySelectorAll('#est-tbody tr').forEach(tr => prodSum += parseNum(tr.querySelector('.sum').textContent));
+
+            /* [v1.8] 운임 수량 자동화: calcTotal 호출 시에도 운임 수량을 갱신 */
+            let totalProductQty = 0;
+            document.querySelectorAll('#est-tbody tr').forEach(r => {
+                totalProductQty += parseNum(r.querySelector('.qty')?.value);
+            });
+            const freightQty = Math.max(1, Math.ceil(totalProductQty / 2));
+            document.querySelectorAll('#cons-tbody tr').forEach(r => {
+                const name = r.querySelector('td:nth-child(2) input')?.value.trim();
+                if(name === '운임') {
+                    r.querySelector('.c-qty').value = freightQty;
+                    const price = parseNum(r.querySelector('.c-price').value);
+                    r.querySelector('.c-sum').textContent = formatNumber(freightQty * price);
+                }
+            });
             
             // 간접 공사비 업데이트 시 calcCons를 호출하지 않고 직접 DOM 업데이트 (재귀 방지)
             document.querySelectorAll('#cons-tbody tr').forEach(r => {
@@ -1017,20 +1118,65 @@
         function saveData(manual = false) { const inputs = {}; document.querySelectorAll('input[id], select[id], textarea[id]').forEach(el => inputs[el.id] = el.value); localStorage.setItem(STORAGE_KEY, JSON.stringify(inputs)); }
         function resetData() { if(confirm("모든 데이터를 초기화하시겠습니까?")) { localStorage.removeItem(STORAGE_KEY); location.reload(); } }
 
+        /* [v1.8] PDF 저장: 파일명 규칙 OSQ_지역_고객명_연락처.pdf + cloneNode 값 캡처 강화 */
         async function saveAsPDF() {
             const overlay = document.getElementById('loading-overlay');
             overlay.classList.remove('hidden'); overlay.classList.add('flex');
             try {
                 const hidden = document.getElementById('pdf-hidden-container');
                 hidden.innerHTML = '';
+
+                /* [v1.8] PDF 렌더링 강화: cloneNode 전에 select/textarea 값을 실시간 캡처하여 주입 */
+                // 1단계: 원본 DOM에서 select의 선택값과 textarea 값을 attribute로 기록
+                document.querySelectorAll('#capture-area-1 select, #capture-area-2 select').forEach(sel => {
+                    sel.setAttribute('data-pdf-value', sel.value);
+                    const selectedIdx = sel.selectedIndex;
+                    Array.from(sel.options).forEach((opt, i) => {
+                        if (i === selectedIdx) opt.setAttribute('selected', 'selected');
+                        else opt.removeAttribute('selected');
+                    });
+                });
+                document.querySelectorAll('#capture-area-1 textarea, #capture-area-2 textarea').forEach(ta => {
+                    ta.setAttribute('data-pdf-value', ta.value);
+                    ta.textContent = ta.value;
+                });
+                document.querySelectorAll('#capture-area-1 input, #capture-area-2 input').forEach(inp => {
+                    if (inp.type === 'checkbox') {
+                        if (inp.checked) inp.setAttribute('checked', 'checked');
+                        else inp.removeAttribute('checked');
+                    } else {
+                        inp.setAttribute('value', inp.value);
+                    }
+                });
+
                 const clone1 = document.getElementById('capture-area-1').cloneNode(true);
                 const clone2 = document.getElementById('capture-area-2').cloneNode(true);
+
                 const processClone = (node) => {
-                    node.querySelectorAll('input, select, textarea').forEach(el => {
+                    // select 값 복원 후 span 치환
+                    node.querySelectorAll('select').forEach(sel => {
+                        const val = sel.getAttribute('data-pdf-value') || '';
+                        const selectedOpt = Array.from(sel.options).find(o => o.value === val);
                         const span = document.createElement('span');
-                        if (el.type === 'checkbox') { span.innerHTML = el.checked ? '&#9745;' : '&#9744;'; span.style.fontSize = '16px'; }
-                        else { span.textContent = el.tagName === 'SELECT' ? (el.options[el.selectedIndex]?.text || '') : el.value; if(el.tagName === 'TEXTAREA') { span.style.whiteSpace = 'pre-wrap'; span.style.display = 'block'; } }
-                        el.parentNode.replaceChild(span, el);
+                        span.textContent = selectedOpt ? selectedOpt.text : val;
+                        sel.parentNode.replaceChild(span, sel);
+                    });
+                    node.querySelectorAll('textarea').forEach(ta => {
+                        const span = document.createElement('span');
+                        span.textContent = ta.getAttribute('data-pdf-value') || ta.value;
+                        span.style.whiteSpace = 'pre-wrap';
+                        span.style.display = 'block';
+                        ta.parentNode.replaceChild(span, ta);
+                    });
+                    node.querySelectorAll('input').forEach(inp => {
+                        const span = document.createElement('span');
+                        if (inp.type === 'checkbox') {
+                            span.innerHTML = inp.hasAttribute('checked') ? '&#9745;' : '&#9744;';
+                            span.style.fontSize = '16px';
+                        } else {
+                            span.textContent = inp.value;
+                        }
+                        inp.parentNode.replaceChild(span, inp);
                     });
                     node.querySelectorAll('button, .hidden-on-print').forEach(b => b.remove());
                     node.classList.add('pdf-mode');
@@ -1051,9 +1197,15 @@
                 const img2 = canvas2.toDataURL('image/jpeg', 0.85);
                 const h2 = (canvas2.height * pageWidth) / canvas2.width;
                 doc.addImage(img2, 'JPEG', 0, 0, pageWidth, h2 > pageHeight ? pageHeight : h2);
+
+                /* [v1.8] 파일명 규칙: OSQ_지역_고객명_연락처.pdf */
+                const regionDo = document.getElementById('region-do').value || '';
+                const regionSi = document.getElementById('region-si').value || '';
+                const regionShort = regionSi || regionDo || '미정';
                 const custName = document.getElementById('cust-name').value.trim() || 'VIP';
-                const d = new Date();
-                const fileName = `OSQ_${custName}_${d.getFullYear().toString().slice(-2)}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}.pdf`;
+                const custPhone = document.getElementById('cust-phone').value.trim().replace(/-/g, '') || '0000';
+                const fileName = `OSQ_${regionShort}_${custName}_${custPhone}.pdf`;
+
                 const pdfBlob = doc.output('blob');
                 const blobURL = URL.createObjectURL(pdfBlob);
                 const link = document.createElement('a');
